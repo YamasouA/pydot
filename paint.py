@@ -1,5 +1,6 @@
 import tkinter
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageTk
+from search_flag import search_img
 
 
 class Application(tkinter.Frame):
@@ -44,6 +45,10 @@ class Application(tkinter.Frame):
         self.test_canvas.bind('<B1-Motion>', self.paint)
         self.test_canvas.bind('<ButtonRelease-1>', self.reset)
 
+        self.flag_img = tkinter.PhotoImage(file="")
+        self.flag_canvas = tkinter.Canvas(self, bg='white', width=600, height=300)
+        self.flag_canvas.grid(row=3, column=0, columnspan=4)
+
     def setup(self):
         self.old_x = None
         self.old_y = None
@@ -76,8 +81,18 @@ class Application(tkinter.Frame):
             self.test_canvas.create_line(self.old_x, self.old_y, event.x, event.y, width = 5.0, fill=self.paint_color,
                                         capstyle=tkinter.ROUND, smooth=tkinter.TRUE, splinesteps=36)
             self.draw.line((self.old_x, self.old_y, event.x, event.y), fill=self.paint_color, width=5)
+            self.im.save('test.jpg', 'jpeg')
         self.old_x = event.x
         self.old_y = event.y
+        path = search_img('test.jpg')
+        path = './hata/' + path + ".gif"
+        img = Image.open(path)
+        img = img.convert('RGB')
+        self.flag_canvas.photo = ImageTk.PhotoImage(img)
+        img_show = self.flag_canvas.create_image(0, 0, anchor='nw', image=self.flag_canvas.photo)
+        
+
+        
 
     def reset(self, event):
         self.old_x, self.old_y = None, None
